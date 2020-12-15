@@ -46,18 +46,19 @@ class Decoder(nn.Module):
         reconstruction = torch.sigmoid(x)
         return reconstruction, mu, log_var
 
-    def generate(self):
+    def generate(self, amount):
         '''
         So far I have run this from Python console. Run:
         from src.decoder import Decoder
         d = Decoder()
-        d.generate()  # Can be called multiple times using a for loop.
+        d.generate(amount)
         '''
 
-        random = torch.randn((16, 2))
-        outcome = self.forward(random)
-        # for result in outcome:
-        plt.figure()
-        plt.set_cmap('Greys')
-        img = outcome[0].view(28, 28)
-        plt.imshow(img.detach().numpy())
+        for i in range(amount):
+            random = torch.randn((16, 2))
+            outcome = self.forward(random)
+            # for result in outcome:
+            plt.figure()
+            plt.set_cmap('Greys')
+            img = outcome[0].view(28, 28)
+            plt.imshow(img.detach().numpy())
