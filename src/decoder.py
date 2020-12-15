@@ -9,13 +9,17 @@ features = 16
 
 class Decoder(nn.Module):
 
-    def __init__(self):
+    def __init__(self, path=None):
         super(Decoder, self).__init__()
         # Decoder
         self.decoder1 = nn.Linear(in_features=features, out_features=512)
         self.decoder2 = nn.Linear(in_features=512, out_features=28 * 28)
-        self.load_state_dict(
-            torch.load(os.getcwd() + '\\outputs\\decoder20.pth'))  # Load the decoder weights learned from model.py
+
+        if not path:
+            print("You should only call Decoder without arguments if run from Python console.")
+            path = os.getcwd() + '\\outputs\\decoder20.pth'
+
+        self.load_state_dict(torch.load(path))  # Load the decoder weights learned from model.py
 
     def reparameterise(self, mu, log_var):
         '''
@@ -46,19 +50,26 @@ class Decoder(nn.Module):
         reconstruction = torch.sigmoid(x)
         return reconstruction, mu, log_var
 
-    def generate(self, amount):
-        '''
-        So far I have run this from Python console. Run:
-        from src.decoder import Decoder
-        d = Decoder()
-        d.generate(amount)
-        '''
-
+    def generate(self, amount=7, input=None):
         for i in range(amount):
-            random = torch.randn((16, 2))
-            outcome = self.forward(random)
-            # for result in outcome:
+            if not input:
+                sample = torch.randn((16, 2))
+            else:
+                sample = input[i]
+
+            output = self.forward(sample)
+
+            # Plot the outcome
             plt.figure()
             plt.set_cmap('Greys')
-            img = outcome[0].view(28, 28)
+            img = output[0].view(28, 28)
             plt.imshow(img.detach().numpy())
+
+        plt.show()
+
+
+if __name__ == '__main__':
+    path = os.path.dirname(os.getcwd()) + '\\outputs\\decoder20.pth'
+    d = Decoder(path)
+    # Uncomment the line below to generate images based on random inputs.
+    d.generate(amount=3, input=None)
