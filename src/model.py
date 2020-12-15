@@ -43,7 +43,6 @@ class LinearVAE(nn.Module):
             print(x.shape)
             x = x.view(-1, 2, features)  # -1 means "Figure it out".
 
-            # Derivation of the code below is not entirely clear yet.
             mu = x[:, 0, :]  # The first feature values are the mean.
             log_var = x[:, 1, :]  # The second feature values are the variance.
 
